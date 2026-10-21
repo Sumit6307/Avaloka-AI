@@ -20,6 +20,8 @@ from reportlab.pdfgen import canvas
 class NumberedCanvas(canvas.Canvas):
     """Custom canvas that performs two-pass rendering for accurate 'Page X of Y' numbering."""
 
+    candidate_info = "Candidate: Sumit Kesarwani | sumitkesar6307@gmail.com"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._saved_page_states = []
@@ -51,7 +53,7 @@ class NumberedCanvas(canvas.Canvas):
         # Running footer
         page_str = f"Page {self._pageNumber} of {page_count}"
         self.drawRightString(letter[0] - 54, 36, page_str)
-        self.drawString(54, 36, "Candidate: Sumit Kesarwani | sumitkesar6307@gmail.com")
+        self.drawString(54, 36, self.candidate_info)
         self.setStrokeColor(colors.HexColor("#CBD5E1"))
         self.setLineWidth(0.5)
         self.line(54, 46, letter[0] - 54, 46)
@@ -59,7 +61,13 @@ class NumberedCanvas(canvas.Canvas):
         self.restoreState()
 
 
-def create_assignment_pdf(output_filename="Sumit_Kesarwani_Avaloka_Assignment.pdf"):
+def create_assignment_pdf(
+    output_filename="Sumit_Kesarwani_Avaloka_Assignment.pdf",
+    candidate_name="Sumit Kesarwani",
+    candidate_email="sumitkesar6307@gmail.com"
+):
+    NumberedCanvas.candidate_info = f"Candidate: {candidate_name} | {candidate_email}"
+
     doc = SimpleDocTemplate(
         output_filename,
         pagesize=letter,
@@ -197,8 +205,8 @@ def create_assignment_pdf(output_filename="Sumit_Kesarwani_Avaloka_Assignment.pd
     story.append(Paragraph("Data Structures & Systems Design: In-Depth Solutions and Architectural Analysis", subtitle_style))
 
     meta_text = (
-        "<b>Candidate:</b> Sumit Kesarwani &nbsp;|&nbsp; "
-        "<b>Email:</b> sumitkesar6307@gmail.com &nbsp;|&nbsp; "
+        f"<b>Candidate:</b> {candidate_name} &nbsp;|&nbsp; "
+        f"<b>Email:</b> {candidate_email} &nbsp;|&nbsp; "
         "<b>Role:</b> Software Engineering Intern &nbsp;|&nbsp; "
         "<b>Date:</b> October 2026"
     )
@@ -562,7 +570,15 @@ def min_rooms_required(events: List[Event]) -> int:
     )
     story.append(Paragraph(fp_text, body_style))
 
-    fp_code = """def assign_rooms(events: List[Tuple[int, int]]) -> Dict[str, Any]:
+    fp_code = """def room_index_to_name(index: int) -> str:
+    name, curr = "", index
+    while curr > 0:
+        curr -= 1
+        name = chr(ord('A') + (curr % 26)) + name
+        curr //= 26
+    return f"Room {name}"
+
+def assign_rooms(events: List[Tuple[int, int]]) -> Dict[str, Any]:
     indexed = [(ev[0], ev[1], i) for i, ev in enumerate(events)]
     indexed.sort(key=lambda x: (x[0], x[1]))
     active_heap, free_heap = [], []  # (end, room_id) and [free_id]
@@ -578,7 +594,7 @@ def min_rooms_required(events: List[Event]) -> int:
             total_created += 1
             room_id = total_created
         heapq.heappush(active_heap, (end, room_id))
-        assignments[orig_idx] = f"Room {chr(ord('A') + room_id - 1)}"
+        assignments[orig_idx] = room_index_to_name(room_id)
 
     return {"min_rooms": total_created, "assignments": assignments}"""
 
@@ -587,8 +603,8 @@ def min_rooms_required(events: List[Event]) -> int:
         ('BACKGROUND', (0, 0), (-1, -1), code_bg),
         ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor("#F8FAFC")),
         ('FONTNAME', (0, 0), (-1, -1), 'Courier'),
-        ('FONTSIZE', (0, 0), (-1, -1), 6.8),
-        ('LEADING', (0, 0), (-1, -1), 8.8),
+        ('FONTSIZE', (0, 0), (-1, -1), 6.5),
+        ('LEADING', (0, 0), (-1, -1), 8.5),
         ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
         ('TOPPADDING', (0, 0), (-1, -1), 5),
         ('LEFTPADDING', (0, 0), (-1, -1), 8),
@@ -633,5 +649,16 @@ def min_rooms_required(events: List[Event]) -> int:
 
 
 if __name__ == "__main__":
-    fname = sys.argv[1] if len(sys.argv) > 1 else "Sumit_Kesarwani_Avaloka_Assignment.pdf"
-    create_assignment_pdf(fname)
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Generate styled PDF report for Avaloka AI assignment.")
+    parser.add_argument("--name", default="Sumit Kesarwani", help="Candidate full name")
+    parser.add_argument("--email", default="sumitkesar6307@gmail.com", help="Candidate email address")
+    parser.add_argument("--output", default="Sumit_Kesarwani_Avaloka_Assignment.pdf", help="Output PDF file path")
+    args = parser.parse_args()
+
+    create_assignment_pdf(
+        output_filename=args.output,
+        candidate_name=args.name,
+        candidate_email=args.email
+    )
