@@ -45,7 +45,7 @@ class NumberedCanvas(canvas.Canvas):
 
         # Running header (on pages after page 1)
         if self._pageNumber > 1:
-            self.drawString(54, 750, "Avaloka AI — Software Engineering Assessment | Data Structures & Systems Design")
+            self.drawString(54, 750, "Avaloka AI - Software Engineering Assessment | Data Structures & Systems Design")
             self.setStrokeColor(colors.HexColor("#CBD5E1"))
             self.setLineWidth(0.5)
             self.line(54, 742, letter[0] - 54, 742)
@@ -201,7 +201,7 @@ def create_assignment_pdf(
     story = []
 
     # Title & Metadata Banner
-    story.append(Paragraph("Avaloka AI — Software Engineering Assessment", title_style))
+    story.append(Paragraph("Avaloka AI - Software Engineering Assessment", title_style))
     story.append(Paragraph("Data Structures & Systems Design: In-Depth Solutions and Architectural Analysis", subtitle_style))
 
     meta_text = (
@@ -236,20 +236,20 @@ def create_assignment_pdf(
     story.append(Paragraph(p1_exp, body_style))
 
     story.append(Paragraph(
-        "• <b>Hash Map (Python Dictionary):</b> Provides average-case O(1) lookup. Given a key, it returns a direct reference "
+        "&bull; <b>Hash Map (Python Dictionary):</b> Provides average-case O(1) lookup. Given a key, it returns a direct reference "
         "to its corresponding node in memory. Without a hash map, finding a key requires an O(N) linear search.",
         bullet_style
     ))
     story.append(Paragraph(
-        "• <b>Doubly Linked List (DLL):</b> Maintains chronological recency ordering. Each node stores <code>key</code>, "
-        "<code>val</code>, and pointers to both <code>prev</code> and <code>next</code>. Unlike a singly linked list—which "
-        "requires an O(N) scan from the head to find the predecessor when deleting a node—a doubly linked list allows "
+        "&bull; <b>Doubly Linked List (DLL):</b> Maintains chronological recency ordering. Each node stores <code>key</code>, "
+        "<code>val</code>, and pointers to both <code>prev</code> and <code>next</code>. Unlike a singly linked list&mdash;which "
+        "requires an O(N) scan from the head to find the predecessor when deleting a node&mdash;a doubly linked list allows "
         "<b>instant O(1) removal</b> of any node given its reference: <code>node.prev.next = node.next</code> and "
         "<code>node.next.prev = node.prev</code>.",
         bullet_style
     ))
     story.append(Paragraph(
-        "• <b>Sentinel (Dummy) Nodes Pattern:</b> We initialize the DLL with fixed dummy <code>head</code> and <code>tail</code> "
+        "&bull; <b>Sentinel (Dummy) Nodes Pattern:</b> We initialize the DLL with fixed dummy <code>head</code> and <code>tail</code> "
         "nodes (where <code>head.next = tail</code>). The dummy head represents the Most Recently Used (MRU) boundary, "
         "and dummy tail represents the Least Recently Used (LRU) boundary. This completely eliminates boundary checks "
         "when modifying an empty list or singleton nodes.",
@@ -561,10 +561,10 @@ def min_rooms_required(events: List[Event]) -> int:
     fp_text = (
         "In production meeting platforms, calculating room quantity is only step one; the system must assign specific, "
         "labeled rooms (e.g. 'Room A', 'Room B') while maximizing room utilization. We achieve this via a <b>Dual-Heap Architecture</b>:<br/>"
-        "• <b>active_rooms_heap:</b> Min-heap storing <code>(end_time, room_id)</code> to track when rooms are released.<br/>"
-        "• <b>free_rooms_heap:</b> Min-heap of available room IDs (e.g. [1, 2, ...]). Using a min-heap guarantees that lower-indexed "
+        "&bull; <b>active_rooms_heap:</b> Min-heap storing <code>(end_time, room_id)</code> to track when rooms are released.<br/>"
+        "&bull; <b>free_rooms_heap:</b> Min-heap of available room IDs (e.g. [1, 2, ...]). Using a min-heap guarantees that lower-indexed "
         "rooms are always reused first (e.g. prioritizing 'Room A' over opening 'Room C').<br/>"
-        "• <b>Workflow:</b> When an event begins, any concluded meetings in <code>active_rooms_heap</code> release their room IDs back to "
+        "&bull; <b>Workflow:</b> When an event begins, any concluded meetings in <code>active_rooms_heap</code> release their room IDs back to "
         "<code>free_rooms_heap</code>. We pop the lowest free room ID, map it to a human-readable room name (<code>1 &rarr; 'Room A'</code>), "
         "and push <code>(end_time, room_id)</code> to active rooms."
     )
@@ -620,14 +620,14 @@ def assign_rooms(events: List[Tuple[int, int]]) -> Dict[str, Any]:
         "pointer references, causing cycles, orphaned nodes, or crash with <code>AttributeError</code>. Concurrent <code>put()</code> calls "
         "can corrupt hash map buckets and double-evict items.<br/>"
         "<b>2. Synchronization Strategies:</b><br/>"
-        "• <b>Reentrant Mutual Exclusion (threading.RLock):</b> Protect all operations with an internal RLock (<code>with self._lock:</code>). "
+        "&bull; <b>Reentrant Mutual Exclusion (threading.RLock):</b> Protect all operations with an internal RLock (<code>with self._lock:</code>). "
         "Provides 100% thread safety and reentrant method invocation.<br/>"
-        "• <b>Asynchronous Recency Buffering (Caffeine / Guava Pattern):</b> In high-read production environments, an exclusive lock on every "
+        "&bull; <b>Asynchronous Recency Buffering (Caffeine / Guava Pattern):</b> In high-read production environments, an exclusive lock on every "
         "get() creates severe contention. High-performance systems use a Concurrent Hash Map for reads, and push access events into a lock-free "
         "MPSC ring buffer. A background worker drains the buffer to batch-update DLL recency.<br/>"
-        "• <b>Lock Striping / Sharded Cache:</b> Partitioning the cache into K independent sub-caches (shards) by <code>hash(key) % K</code> "
+        "&bull; <b>Lock Striping / Sharded Cache:</b> Partitioning the cache into K independent sub-caches (shards) by <code>hash(key) % K</code> "
         "reduces lock contention by a factor of K, scaling linearly across CPU cores.<br/>"
-        "• <b>Atomic Cache Stampede Prevention:</b> Providing an atomic <code>get_or_compute(key, loader)</code> prevents 100 threads from simultaneously "
+        "&bull; <b>Atomic Cache Stampede Prevention:</b> Providing an atomic <code>get_or_compute(key, loader)</code> prevents 100 threads from simultaneously "
         "hitting downstream databases on a cache miss."
     )
     story.append(Paragraph(conc_text, body_style))
